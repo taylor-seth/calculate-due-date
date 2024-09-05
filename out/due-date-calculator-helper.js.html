@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: due-date-calculator-helper.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: due-date-calculator-helper.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module DueDateCalculatorHelper
+*/
+
+/** 
+ * @constant
+ * @type {number}
+ * @default
+*/
+const SATURDAY = 6;
+
+/** 
+ * @constant
+ * @type {number}
+ * @default
+*/
+const SUNDAY = 0;
+
+/** 
+ * @constant
+ * @type {number}
+ * @default
+*/
+const FRIDAY = 5;
+
+/** 
+ * @constant
+ * @type {number}
+ * @default
+*/
+const WEEKEND_SKIP = 3;
+
+/** 
+ * @constant
+ * @type {number}
+ * @default
+*/
+const NEXT_DAY = 1;
+
+/** 
+ * @constant
+ * @type {number}
+ * @default
+*/
+const WORK_DAY_END_TIME = 17;
+
+/** 
+ * @constant
+ * @type {number}
+ * @default
+*/
+const WORK_DAY_START_TIME = 9;
+
+/** 
+ * @constant
+ * @type {number}
+ * @default
+*/
+const ZERO_TURNAROUND_TIME = 0;
+
+/**
+ * @class
+ * @classdesc Helper class to perform validation and calculations for calculating due date
+ * @static
+ */
+export default class DueDateCalculatorHelper {
+    /** 
+     * Validates if the submitted date/time is a valid date
+     * @param {Date} submitDateTime - The submission date/time
+     * @static
+    */
+    static validSubmitDateTime(submitDateTime) {
+        if (!(submitDateTime instanceof Date) || isNaN(submitDateTime)) {
+            return false;
+        }
+
+        return true;
+    }
+    
+    /** 
+     * Validates if the turnaround time is a valid number
+     * @param {number} turnaroundTime - The turnaround time in number of hours
+     * @static
+    */
+    static validTurnaroundTime(turnaroundTime) {
+        if (isNaN(turnaroundTime) || turnaroundTime &lt;= ZERO_TURNAROUND_TIME) {
+            return false;
+        }
+
+        return true;
+    }
+    
+    /** 
+     * Validates if the submitted date/time is within working hours
+     * @param {Date} submitDateTime - The submission date/time
+     * @static
+    */
+    static submittedWithinWorkingHours(submitDateTime) {
+        if (submitDateTime.getHours() >= WORK_DAY_END_TIME 
+            || submitDateTime.getHours() &lt; WORK_DAY_START_TIME
+            || submitDateTime.getDay() === SUNDAY 
+            || submitDateTime.getDay() === SATURDAY) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /** 
+     * Calculates the task end time in number of hours
+     * @param {Date} startDateTime - The start date/time
+     * @param {number} addTime - The number of hours to add
+     * @static
+    */
+    static calculateTaskEndTime(startDateTime, addTime) {
+        return startDateTime.getHours() + addTime;
+    }
+
+    /** 
+     * Calculates the next start time for the remaining task hours
+     * If the current day is a Friday, then skip past weekend. Otherwise, go to next day.
+     * @param {Date} day - The current date/time of work
+     * @returns {Date} The next valid day to start work on task
+     * @static
+    */
+    static calculateNextStartTime(day) {
+        const nextDay = (day.getDay() === FRIDAY) ? (day.getDate() + WEEKEND_SKIP) : (day.getDate() + NEXT_DAY);
+
+        day.setDate(nextDay);
+        day.setHours(WORK_DAY_START_TIME);
+
+        return day;
+    }
+
+    /** 
+     * Calculates the number of remaining task hours
+     * @param {number} taskEndTime - The number of hours in which the task will be completed
+     * @returns {number} The remaining task hours after today
+     * @static
+    */
+    static calculateRemainingHours(taskEndTime) {
+        return taskEndTime - WORK_DAY_END_TIME;
+    }
+
+    /** 
+     * Determines if the task end time is before the work day end time
+     * @param {number} taskEndTime - The number of hours in which the task will be completed
+     * @returns {boolean} If the remaining task hours are less than the work day end hours
+     * @static
+    */
+    static isFinishedInCurrentDay(taskEndTime) {
+        return taskEndTime &lt; WORK_DAY_END_TIME;
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-DueDateCalculatorHelper.html">DueDateCalculatorHelper</a></li></ul><h3>Classes</h3><ul><li><a href="module-DueDateCalculatorHelper.html">DueDateCalculatorHelper</a></li></ul><h3>Global</h3><ul><li><a href="global.html#calculateDueDate">calculateDueDate</a></li><li><a href="global.html#resolveDueDate">resolveDueDate</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Thu Sep 05 2024 13:32:55 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
